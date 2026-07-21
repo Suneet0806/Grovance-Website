@@ -63,8 +63,7 @@ Grovance is a closed, campus-verified marketplace built exclusively for universi
 - dotenv (environment variables)
 
 **Database**
-- PostgreSQL
-- node-postgres (pg)
+- MongoDb
 
 **AI**
 - Anthropic Claude API (claude-haiku — price negotiation chatbot)
@@ -163,20 +162,14 @@ You should see in the terminal:
 Create a `.env` file inside the `backend/` folder with these values:
 
 ```env
-# PostgreSQL credentials
-DB_USER=postgres
-DB_PASS=your_password
-DB_NAME=grovance
-DB_HOST=localhost
-DB_PORT=5432
-
+# MongoDB
+MONGODB_URI=mongodb+srv://ssuneet_grovance:<dbpassword>@cluster0.rfznhs8.mongodb.net/?appName=Cluster0
 # Server
 PORT=5000
-
+NODE_ENV=development
 # Security
-JWT_SECRET=your_jwt_secret_here
-
-# Anthropic AI — get free key at console.anthropic.com
+JWT_SECRET=grovance_secret
+# AI
 ANTHROPIC_API_KEY=sk-ant-api03-your-key-here
 ```
 

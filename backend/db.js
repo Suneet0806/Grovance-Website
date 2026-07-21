@@ -1,12 +1,14 @@
 const { Pool } = require("pg");
 
-// ✅ Reads directly from your .env variables
+const useSsl = process.env.DB_SSL === "true";
+
 const pool = new Pool({
-    user:     process.env.postgres,
-    host:     process.env.DB_HOST || "localhost",
-    database: process.env.Grovance,
-    password: process.env.suneet,
-    port:     process.env.DB_PORT || 5432,
+    user: process.env.DB_USER || "postgres",
+    host: process.env.DB_HOST || "db.tyvtrwifjwkmvctdeawr.supabase.co",
+    database: process.env.DB_NAME || "postgres",
+    password: process.env.DB_PASS,
+    port: Number(process.env.DB_PORT) || 5432,
+    ssl: useSsl ? { rejectUnauthorized: false } : false,
 });
 
 // Test connection on startup

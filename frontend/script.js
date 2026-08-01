@@ -1,5 +1,5 @@
 // ── CONFIG ──────────────────────────────────────────────
-const ALLOWED_DOMAINS = ['vit.edu.in','vitapstudent.ac.in','iitm.ac.in','srmist.edu.in','mit.edu','iih.ac.in','iiit.ac.in','iiitm.ac.in','iiitdm.ac.in','iiitk.ac.in','iiitb.ac.in','iiitd.ac.in','iiitu.ac.in','iiith.ac.in','iiitn.ac.in','iiitp.ac.in','iiitr.ac.in','iiits.ac.in','iiitt.ac.in','iiitu.ac.in','iiitv.ac.in','iiitw.ac.in','iiitkalyani.ac.in','iiitbh.ac.in','iiitdmj.ac.in','iiitmkp.ac.in','iiitnagpur.ac.in','iiitvadodara.ac.in','iiitbhu.ac.in','iiitkottayam.ac.in','iiitmanipur.ac.in','iiitp.ac.in','iiitdm.ac.in','iiitk.ac.in','iiitb.ac.in','iiitd.ac.in','iiitu.ac.in','iiith.ac.in','iiitn.ac.in','iiitp.ac.in','iiitr.ac.in','iiits.ac.in','iiitt.ac.in','iiitu.ac.in','iiitv.ac.in','iiitw.ac.in','iiitkalyani.ac.in','iiitbh.ac.in','iiitdmj.ac.in','iiitmkp.ac.in','iiitnagpur.ac.in','iiitvadodara.ac.in','iiitbhu.ac.in','iiitkottayam.ac.in','iiitmanipur.ac.in'];
+const ALLOWED_DOMAINS = ['vit.edu.in','vitapstudent.ac.in','iitm.ac.in','srmist.edu.in','mit.edu'];
 // ✅ Auto-detects environment — uses Render in production, localhost in development
 const API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://localhost:5000'
@@ -54,22 +54,23 @@ function handleNavSearch(val) {
 // ── AUTH ─────────────────────────────────────────────────
 async function handleRegister(e) {
     e.preventDefault();
-    const full_name = document.getElementById('reg-name').value.trim();
-    const email     = document.getElementById('reg-email').value.trim().toLowerCase();
-    const password   = document.getElementById('reg-password').value.trim();
-    const college = document.getElementById('reg-university').value;
-    const phone       = document.getElementById('reg-phone').value.trim();
+    console.log('Registering user...');
+    const name = document.getElementById('reg-name').value.trim();
+    const email   = document.getElementById('reg-email').value.trim().toLowerCase();
+    const password = document.getElementById('reg-password').value.trim();
+    const college = document.getElementById('reg-college').value;
+    const phone   = document.getElementById('reg-phone').value.trim();
 
     const domain = email.split('@')[1];
     if (!domain || !ALLOWED_DOMAINS.includes(domain)) {
-        alert('Please use a valid university email.\nAllowed: ' + ALLOWED_DOMAINS.join(', '));
+        alert('Please use a valid college email.\nAllowed: ' + ALLOWED_DOMAINS.join(', '));
         return;
     }
     try {
         const res = await fetch(`${API}/api/users/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, email, college, phone })
+            body: JSON.stringify({ name, email, password, phone, college })
         });
         if (!res.ok) { alert('Registration failed: ' + await res.text()); return; }
         const data = await res.json();
@@ -90,7 +91,7 @@ async function handleLogin(e) {
         const res = await fetch(`${API}/api/users/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password,phone })
+            body: JSON.stringify({ email, password, phone })
         });
         if (!res.ok) { alert('Login failed: ' + await res.text()); return; }
         const data = await res.json();
@@ -139,8 +140,8 @@ async function renderMarketplace() {
     grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px;color:#8A98B4;">Loading listings...</div>`;
 
     // ✅ Pass college to backend so it filters by university
-    const college = currentUser ? encodeURIComponent(currentUser.college) : '';
-    const url     = college ? `${API}/api/products?college=${college}` : `${API}/api/products`;
+    const university = currentUser ? encodeURIComponent(currentUser.college) : '';
+    const url     = university ? `${API}/api/products?college=${university}` : `${API}/api/products`;
 
     try {
         const res = await fetch(url);

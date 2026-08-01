@@ -54,8 +54,10 @@ function handleNavSearch(val) {
 // ── AUTH ─────────────────────────────────────────────────
 async function handleRegister(e) {
     e.preventDefault();
-    const name    = document.getElementById('reg-name').value.trim();
+    console.log('Registering user...');
+    const name = document.getElementById('reg-name').value.trim();
     const email   = document.getElementById('reg-email').value.trim().toLowerCase();
+    const password = document.getElementById('reg-password').value.trim();
     const college = document.getElementById('reg-college').value;
     const phone   = document.getElementById('reg-phone').value.trim();
 
@@ -68,7 +70,7 @@ async function handleRegister(e) {
         const res = await fetch(`${API}/api/users/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, email, college, phone })
+            body: JSON.stringify({ name, email, password, phone, college })
         });
         if (!res.ok) { alert('Registration failed: ' + await res.text()); return; }
         const data = await res.json();
@@ -83,12 +85,13 @@ async function handleRegister(e) {
 async function handleLogin(e) {
     e.preventDefault();
     const email = document.getElementById('login-email').value.trim().toLowerCase();
+    const password = document.getElementById('login-password').value.trim();
     const phone = document.getElementById('login-phone').value.trim();
     try {
         const res = await fetch(`${API}/api/users/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, phone })
+            body: JSON.stringify({ email, password, phone })
         });
         if (!res.ok) { alert('Login failed: ' + await res.text()); return; }
         const data = await res.json();
@@ -137,8 +140,8 @@ async function renderMarketplace() {
     grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px;color:#8A98B4;">Loading listings...</div>`;
 
     // ✅ Pass college to backend so it filters by university
-    const college = currentUser ? encodeURIComponent(currentUser.college) : '';
-    const url     = college ? `${API}/api/products?college=${college}` : `${API}/api/products`;
+    const university = currentUser ? encodeURIComponent(currentUser.college) : '';
+    const url     = university ? `${API}/api/products?college=${university}` : `${API}/api/products`;
 
     try {
         const res = await fetch(url);

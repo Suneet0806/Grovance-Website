@@ -1,21 +1,22 @@
+require("dotenv").config();
 const { Pool } = require("pg");
 
-// Create PostgreSQL connection pool
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: process.env.DB_URL,
   ssl: {
-    rejectUnauthorized: false
-  }
+    rejectUnauthorized: false,
+  },
 });
 
-// Test database connection when server starts
-pool.connect((err, client, release) => {
-  if (err) {
-    console.error("❌ Database connection failed:", err.message);
-  } else {
+// Test connection
+(async () => {
+  try {
+    const client = await pool.connect();
     console.log("✅ Database connected successfully");
-    release();
+    client.release();
+  } catch (err) {
+    console.error("❌ Database connection failed:", err.message);
   }
-});
+})();
 
 module.exports = pool;

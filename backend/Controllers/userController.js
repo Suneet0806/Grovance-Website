@@ -1,15 +1,10 @@
-const pool = require("../db");
+const User = require("../models/User");
 
 // REGISTER
 exports.registerUser = async (req, res) => {
-    const { name, email, phone, college } = req.body;
-
     try {
-        const result = await pool.query(
-            "INSERT INTO users(name, email, phone, college) VALUES($1, $2, $3, $4) RETURNING *",
-            [name, email, phone, college]
-        );
-        res.json(result.rows[0]);
+        const user = await User.create(req.body);
+        res.status(201).json(user);
     } catch (err) {
         console.error(err);
         res.status(500).send("Error creating user");
@@ -21,16 +16,16 @@ exports.loginUser = async (req, res) => {
     const { email, phone } = req.body;
 
     try {
-        const result = await pool.query(
-            "SELECT * FROM users WHERE email = $1 AND phone = $2",
-            [email, phone]
-        );
+        const user = await User.findOne({
+            email,
+            phone,
+        });
 
-        if (result.rows.length === 0) {
+        if (!user) {
             return res.status(401).send("Invalid email or phone number.");
         }
 
-        res.json(result.rows[0]);
+        res.json(user);
     } catch (err) {
         console.error(err);
         res.status(500).send("Error logging in");

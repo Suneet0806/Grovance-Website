@@ -107,8 +107,8 @@ router.post("/", upload.single("image"), async (req, res) => {
     const imageName = req.file ? req.file.filename : null;
     try {
         const result = await pool.query(
-            `INSERT INTO products(title, price, category, description, college, sellername, sellerphone, image, views, created_at, min_price)
-             VALUES($1,$2,$3,$4,$5,$6,$7,$8, 0, NOW(), $9) RETURNING *`,
+            `INSERT INTO products(title, price, category, description, college, sellername, sellerphone, image, min_price,created_at)
+             VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,NOW()) RETURNING *`,
             [title, price, category, description, college, sellername, sellerphone, imageName, min_price || null]
         );
         res.json(result.rows[0]);
@@ -157,7 +157,7 @@ router.get("/wanted/all", async (req, res) => {
 
 // POST a wanted request
 router.post("/wanted", async (req, res) => {
-    const { title, description, budget, category, college, buyername, buyerphone } = req.body;
+    const { id, seller_id, category_id, title, description, price, condition, image_url,status,created_at } = req.body;
     if (!title || !college || !buyername || !buyerphone) {
         return res.status(400).send("Title, college, buyer name and phone are required.");
     }

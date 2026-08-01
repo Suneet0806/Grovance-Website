@@ -1,25 +1,23 @@
-const pool = require("../db");
+const Product = require("../models/Product");
 
-exports.getProducts = async (req,res)=>{
-    try{
-        const result = await pool.query("SELECT * FROM products");
-        res.json(result.rows);
-    }catch(err){
-        res.status(500).send(err);
+// GET PRODUCTS
+exports.getProducts = async (req, res) => {
+    try {
+        const products = await Product.find();
+        res.json(products);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error fetching products");
     }
 };
 
-exports.addProduct = async (req,res)=>{
-    const {title,price,category,description,college,sellername,sellerphone} = req.body;
-
-    try{
-        const result = await pool.query(
-            "INSERT INTO products(title,price,category,description,college,sellername,sellerphone) VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING *",
-            [title,price,category,description,college,sellername,sellerphone]
-        );
-
-        res.json(result.rows[0]);
-    }catch(err){
-        res.status(500).send(err);
+// ADD PRODUCT
+exports.addProduct = async (req, res) => {
+    try {
+        const product = await Product.create(req.body);
+        res.status(201).json(product);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error adding product");
     }
 };

@@ -2,11 +2,15 @@ const path    = require("path");
 const express = require("express");
 const cors    = require("cors");
 
+require("dotenv").config();
+
 // ✅ Load .env from the exact folder where server.js lives
 require("dotenv").config({ path: path.join(__dirname, ".env") });
 
 // Debug log — remove this line once you confirm it shows YES ✅
 console.log("🔑 API Key loaded:", process.env.ANTHROPIC_API_KEY ? "YES ✅" : "NO ❌  — check your .env file");
+
+console.log("🔑 Database URL loaded:", process.env.DB_URL ? "YES ✅" : "NO ❌  — check your .env file");
 
 const pool          = require("./db");
 const userRoutes    = require("./routes/userRoutes");

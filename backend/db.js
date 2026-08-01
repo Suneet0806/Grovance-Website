@@ -1,24 +1,22 @@
+require("dotenv").config();
 const { Pool } = require("pg");
 
-const useSsl = process.env.DB_SSL === "true";
-
 const pool = new Pool({
-    user: process.env.DB_USER || "postgres",
-    host: process.env.DB_HOST || "db.tyvtrwifjwkmvctdeawr.supabase.co",
-    database: process.env.DB_NAME || "postgres",
-    password: process.env.DB_PASS,
-    port: Number(process.env.DB_PORT) || 5432,
-    ssl: useSsl ? { rejectUnauthorized: false } : false,
+  connectionString: process.env.DB_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 
-// Test connection on startup
-pool.connect((err, client, release) => {
-    if (err) {
-        console.error("❌ Database connection failed:", err.message);
-    } else {
-        console.log("✅ Database connected successfully");
-        release();
-    }
-});
+// Test connection
+(async () => {
+  try {
+    const client = await pool.connect();
+    console.log("✅ Database connected successfully");
+    client.release();
+  } catch (err) {
+    console.error("❌ Database connection failed:", err.message);
+  }
+})();
 
 module.exports = pool;
